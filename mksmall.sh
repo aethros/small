@@ -7,39 +7,27 @@
 # ELF output/assembly code.
 
 #cc \                              # Compile the program
-#  -static \                       # Produce a fully static executable (no external dependencies)
+#  -s \                            # Strip symbols from program
+#  -static \                       # Produce a fully static executable
 #  -nostdlib \                     # Don't link libc/start files
-#  -ffunction-sections \           # Maintain sections in the ELF for each function
-#  -fdata-sections \               # Maintain sections in the ELF for each data object
-#  -fno-asynchronous-unwind-tables \  # No .eh_frame unwind info
-#  -fno-ident \                    # No .comment section
-#  -Wl,--gc-sections \             # Linker removes unused sections
-#  -Wl,--strip-debug \             # Remove debug info sections but keep symbol names
-#  -Wl,-z,norelro \                # Disable RELRO (Read-Only Relocations) Safety
 #  small.c \                       # Input source file
 #  -o small                        # Output binary
 
 #strip \                           # Strip symbols from a binary
+#  --strip-all \                   # Remove all metadata
 #  --remove-section=.comment \     # Remove .comment metadata
 #  --remove-section=.eh_frame \    # Remove unwind info
-#  --remove-section=.shstrtab \    # Remove the Section Header String Table
 #  ./small                         # Target executable
 
 cc \
+ -s \
  -static \
  -nostdlib \
- -ffunction-sections \
- -fdata-sections \
- -fno-asynchronous-unwind-tables \
- -fno-ident \
- -Wl,--gc-sections \
- -Wl,--strip-debug \
- -Wl,-z,norelro \
  small.c \
  -o small
 
-strip --strip-debug \
+strip \
+ --strip-all \
  --remove-section=.comment \
  --remove-section=.eh_frame \
- --remove-section=.shstrtab \
  small

@@ -1,6 +1,7 @@
 /**
  * This is a minimalist c program demonstrating c language features,
- * such as types (`long`), functions, strings, comments, and macros.
+ * such as types (`long`), functions, strings, comments, and macros,
+ * and control flow.
  * 
  * This program can be built and ran without any external dependencies
  * (such as cstdlib) on linux. I also created an accompanying shell script
@@ -12,9 +13,10 @@
  * Operating System versions.
  */
 
-#define EXIT    93
-#define WRITE   64
+#include <asm/unistd_64.h>
 #define STDOUT  1
+                              //  asm("movq %%"  #reg ", %0" : "=r"(var))
+#define REGISTER_TO_VAR(reg, var) asm("mov %0, " #reg        : "=r"(var)) 
 #define SYSCALL asm("svc #0");  // syscall
 
 void syscall3(long num, long arg1, long arg2, long arg3) {
@@ -32,7 +34,19 @@ void syscall1(long num, long arg) {
 }
 
 void _start(void) {
-    const char msg[] = "Hello, world!\n";
-    syscall3(WRITE, STDOUT, (long)msg, (sizeof(msg) - 1));
-    syscall1(EXIT, 0);
+    long *sp;
+    REGISTER_TO_VAR(sp, sp); // rsp, sp
+    long argc = sp[0];
+    char **argv = (char **)&sp[1];
+    char **envp = &argv[argc + 1];
+
+    if (argc > 1) {
+        const char *cmd = argv[1];
+        const char **args = (const char **)&argv[1];
+        syscall3(__NR_execve, (long)cmd, (long)args, (long)envp);
+    } else {
+        const char usage[] = "Usage: small </path/to/command> [args...]\n";
+        syscall3(__NR_write, STDOUT, (long)usage, (sizeof(usage) - 1));
+        syscall1(__NR_exit, 0);
+    }
 }
