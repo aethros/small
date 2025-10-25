@@ -15,8 +15,6 @@
 
 #include <asm/unistd_64.h>
 #define STDOUT  1
-                              //  asm("movq %%"  #reg ", %0" : "=r"(var))
-#define REGISTER_TO_VAR(reg, var) asm("mov %0, " #reg        : "=r"(var)) 
 #define SYSCALL asm("svc #0");  // syscall
 
 void syscall3(long num, long arg1, long arg2, long arg3) {
@@ -33,9 +31,19 @@ void syscall1(long num, long arg) {
     SYSCALL;
 }
 
+/**
+ * _start with "asm volatile" is necesarry to prevent the stack
+ * from becoming clobbered by the compiler. Jump directly to main.
+ */
 void _start(void) {
-    long *sp;
-    REGISTER_TO_VAR(sp, sp); // rsp, sp
+    asm volatile(
+        "mov x0, sp\n" // mov rdi, rsp 
+        "b main\n"     // jmp main
+    );
+}
+
+void main(void) {
+    register long *sp asm("x0"); // rdi  
     long argc = sp[0];
     char **argv = (char **)&sp[1];
     char **envp = &argv[argc + 1];
