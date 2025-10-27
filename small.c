@@ -13,37 +13,8 @@
  * Operating System versions.
  */
 #include <asm/unistd_64.h>
+#include "syscall.h"
 #define STDOUT  1
-#define SYSCALL asm("svc #0");  // syscall
-
-long syscall3(long num, long arg1, long arg2, long arg3) {
-    register long n  asm("x8") =  num; // rax
-    register long a1 asm("x0") = arg1; // rdi
-    register long a2 asm("x1") = arg2; // rsi
-    register long a3 asm("x2") = arg3; // rdx
-    SYSCALL;
-    register long r asm("x0");
-    return r;
-}
-
-long syscall1(long num, long arg) {
-    register long n asm("x8")  =  num; // rax
-    register long a asm("x0")  =  arg; // rdi
-    SYSCALL;
-    register long r asm("x0");
-    return r;
-}
-
-/**
- * _start with "asm volatile" is necesarry to prevent the stack
- * from becoming clobbered by the compiler. Jump directly to main.
- */
-void _start(void) {
-    asm volatile(
-        "mov x0, sp\n" // mov rdi, rsp 
-        "bl main\n"    // call main
-    );
-}
 
 void main(void) {
     register long* sp asm("x0"); // rdi
@@ -54,8 +25,8 @@ void main(void) {
         const char* cmd = argv[1];
         const char** args = (const char**)&argv[1];
         long r = syscall3(__NR_execve, (long)cmd, (long)args, (long)envp);
-        if (r != 0) {
-            syscall1(__NR_exit, r);
+        if (r < 0) {
+            syscall1(__NR_exit, (-r & 0xff));
         }
     } else {
         const char usage[] = "Usage: small </path/to/command> [args...]\n";
