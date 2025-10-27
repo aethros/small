@@ -14,16 +14,15 @@
  */
 #include <asm/unistd_64.h>
 #include "syscall.h"
-#define STDOUT  1
+#define  STDOUT 1
 
-void main(void) {
-    register long* sp asm("x0"); // rdi
+void main(register long* sp) {
     long argc = sp[0];
-    char** argv = (char**)&sp[1];
-    char** envp = &argv[argc + 1];
+    char** argv = (char**)&(sp[1]);
+    char** envp = &(argv[argc + 1]);
     if (argc > 1) {
         const char* cmd = argv[1];
-        const char** args = (const char**)&argv[1];
+        const char** args = (const char**)&(argv[1]);
         long r = syscall3(__NR_execve, (long)cmd, (long)args, (long)envp);
         if (r < 0) {
             syscall1(__NR_exit, (-r & 0xff));

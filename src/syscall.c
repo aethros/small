@@ -1,5 +1,5 @@
 #include "syscall.h"
-#define SYSCALL asm volatile("svc #0");// syscall
+#define SYSCALL asm volatile("svc #0"); // syscall
 
 /**
  * _start with "asm volatile" is necesarry to prevent the stack
