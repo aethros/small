@@ -8,7 +8,7 @@ STRIP     = strip
 
 # Flags
 COPYFLAGS = --remove-section .comment --remove-section .note.GNU-stack
-SYS_FLAGS = -fomit-frame-pointer -fno-asynchronous-unwind-tables -fno-unwind-tables
+SYS_FLAGS = -fomit-frame-pointer -fno-asynchronous-unwind-tables -fno-unwind-tables -Daarch64=TRUE
 CFLAGS    = -g -static -nostdlib -ffreestanding -Os -flto -ffunction-sections -fdata-sections
 LDFLAGS   = -g -static -nostdlib -s -flto -Wl,--gc-sections
 STRIPFLAGS= --strip-all --remove-section .eh_frame --remove-section .note.GNU-stack \

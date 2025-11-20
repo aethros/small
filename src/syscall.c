@@ -1,83 +1,80 @@
 #include "syscall.h"
-#define SYSCALL asm volatile("svc #0"); // syscall
+#include "asm.h"
 
 /**
  * _start with "asm volatile" is necesarry to prevent the stack
  * from becoming clobbered by the compiler. Jump directly to main.
  */
 void _start(void) {
-    asm volatile(
-        "mov x0, sp\n" // mov rdi, rsp 
-        "bl main\n"    // call main
-    );
+    JUMP_TO_MAIN;
 }
 
 long syscall0(long num) {
-    register long n asm("x8")  =  num; // rax
+    register long n NUM_REG  =  num;
     SYSCALL;
-    register long r asm("x0");         // rax
+    register long r RET_REG;        
     return r;
 }
 
 long syscall1(long num, long arg) {
-    register long n asm("x8")  =  num; // rax
-    register long a asm("x0")  =  arg; // rdi
+    register long n NUM_REG  =  num;
+    register long a  A1_REG  =  arg;
     SYSCALL;
-    register long r asm("x0");         // rax
+    register long r RET_REG;        
     return r;
 }
 
 long syscall2(long num, long arg1, long arg2) {
-    register long n  asm("x8") =  num; // rax
-    register long a1 asm("x0") = arg1; // rdi
-    register long a2 asm("x1") = arg2; // rsi
+    register long n NUM_REG =  num;
+    register long a1 A1_REG = arg1;
+    register long a2 A2_REG = arg2;
     SYSCALL;
-    register long r  asm("x0");        // rax
+    register long r RET_REG;       
     return r;
 }
 
 long syscall3(long num, long arg1, long arg2, long arg3) {
-    register long n  asm("x8") =  num; // rax
-    register long a1 asm("x0") = arg1; // rdi
-    register long a2 asm("x1") = arg2; // rsi
-    register long a3 asm("x2") = arg3; // rdx
+    register long n NUM_REG =  num;
+    register long a1 A1_REG = arg1;
+    register long a2 A2_REG = arg2;
+    register long a3 A3_REG = arg3;
     SYSCALL;
-    register long r  asm("x0");        // rax
+    register long r RET_REG;       
     return r;
 }
 
 long syscall4(long num, long arg1, long arg2, long arg3, long arg4) {
-    register long n  asm("x8") =  num; // rax
-    register long a1 asm("x0") = arg1; // rdi
-    register long a2 asm("x1") = arg2; // rsi
-    register long a3 asm("x2") = arg3; // rdx
-    register long a4 asm("x3") = arg4; // r10
+    register long n NUM_REG =  num;
+    register long a1 A1_REG = arg1;
+    register long a2 A2_REG = arg2;
+    register long a3 A3_REG = arg3;
+    register long a4 A4_REG = arg4;
     SYSCALL;
-    register long r  asm("x0");        // rax
+    register long r RET_REG;       
     return r;
 }
 
 long syscall5(long num, long arg1, long arg2, long arg3, long arg4, long arg5) {
-    register long n  asm("x8") =  num; // rax
-    register long a1 asm("x0") = arg1; // rdi
-    register long a2 asm("x1") = arg2; // rsi
-    register long a3 asm("x2") = arg3; // rdx
-    register long a4 asm("x3") = arg4; // r10
-    register long a5 asm("x4") = arg5; // r8
+    register long n NUM_REG =  num;
+    register long a1 A1_REG = arg1;
+    register long a2 A2_REG = arg2;
+    register long a3 A3_REG = arg3;
+    register long a4 A4_REG = arg4;
+    register long a5 A5_REG = arg5;
     SYSCALL;
-    register long r  asm("x0");        // rax
+    register long r RET_REG;       
     return r;
 }
 
 long syscall6(long num, long arg1, long arg2, long arg3, long arg4, long arg5, long arg6) {
-    register long n  asm("x8") =  num; // rax
-    register long a1 asm("x0") = arg1; // rdi
-    register long a2 asm("x1") = arg2; // rsi
-    register long a3 asm("x2") = arg3; // rdx
-    register long a4 asm("x3") = arg4; // r10
-    register long a5 asm("x4") = arg5; // r8
-    register long a6 asm("x5") = arg6; // r9
+    register long n NUM_REG =  num;
+    register long a1 A1_REG = arg1;
+    register long a2 A2_REG = arg2;
+    register long a3 A3_REG = arg3;
+    register long a4 A4_REG = arg4;
+    register long a5 A5_REG = arg5;
+    register long a6 A6_REG = arg6;
     SYSCALL;
-    register long r  asm("x0");        // rax
+    register long r RET_REG;       
     return r;
 }
