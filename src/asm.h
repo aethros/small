@@ -1,5 +1,5 @@
 #if defined(x86_64)
-    #define JUMP_TO_MAIN asm volatile( "mov rdi, rsp\n" "call main\n" );
+    #define INIT_AND_JUMP(FUNC) asm volatile( "mov rdi, rsp\n" "call "#FUNC"\n" );
     #define NUM_REG asm("rax")
     #define  A1_REG asm("rdi")
     #define  A2_REG asm("rsi")
@@ -10,7 +10,7 @@
     #define RET_REG asm("rax")
     #define SYSCALL asm volatile("syscall");
 #elif defined(aarch64)
-    #define JUMP_TO_MAIN asm volatile( "mov x0, sp\n" "bl main\n" );
+    #define INIT_AND_JUMP(FUNC) asm volatile( "mov x0, sp\n" "bl "#FUNC"\n" );
     #define NUM_REG asm("x8")
     #define  A1_REG asm("x0")
     #define  A2_REG asm("x1")

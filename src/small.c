@@ -16,20 +16,14 @@
 #include "syscall.h"
 #define  STDOUT 1
 
-void main(register long* sp) {
-    long argc = sp[0];
-    char** argv = (char**)&(sp[1]);
-    char** envp = &(argv[argc + 1]);
+int main(int argc, char *argv[], char *envp[]) {
     if (argc > 1) {
         const char* cmd = argv[1];
         const char** args = (const char**)&(argv[1]);
-        long r = syscall3(__NR_execve, (long)cmd, (long)args, (long)envp);
-        if (r < 0) {
-            syscall1(__NR_exit, (-r & 0xff));
-        }
+        return (int)syscall3(__NR_execve, (long)cmd, (long)args, (long)envp);
     } else {
         const char usage[] = "Usage: small </path/to/command> [args...]\n";
         syscall3(__NR_write, STDOUT, (long)usage, (sizeof(usage) - 1));
-        syscall1(__NR_exit, 0);
+        return 0;
     }
 }

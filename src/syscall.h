@@ -2,6 +2,7 @@
 #define SYSCALL_H
 
 void _start(void);
+void _cstart_main(register long* sp);
 
 long syscall0(long num);
 long syscall1(long num, long arg);

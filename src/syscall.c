@@ -1,12 +1,23 @@
+#include <asm/unistd_64.h>
 #include "syscall.h"
 #include "asm.h"
 
+int main(int argc, char* argv[], char* envp[]);
+
 /**
- * _start with "asm volatile" is necesarry to prevent the stack
+ * _start with "asm volatile" macro is necesarry to prevent the stack
  * from becoming clobbered by the compiler. Jump directly to main.
  */
 void _start(void) {
-    JUMP_TO_MAIN;
+    INIT_AND_JUMP(_cstart_main);
+}
+
+void _cstart_main(register long* sp) {
+    long argc = sp[0];
+    char** argv = (char**)&(sp[1]);
+    char** envp = &(argv[argc + 1]);
+    int r = main((int)argc, argv, envp);
+    syscall1(__NR_exit, (r & 0xff));
 }
 
 long syscall0(long num) {
